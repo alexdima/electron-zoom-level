@@ -11,13 +11,24 @@ test('initial');
 webFrame.setZoomLevel(5);
 test('after setZoomLevel call');
 
-setTimeout(function() {
+setTimeout(function () {
     test('5s after setZoomLevel call');
     remote.getCurrentWindow().webContents.openDevTools();
 }, 5000);
 
 function test(msg) {
-    console.log(`${msg} - width of 'a' at zoom level ${webFrame.getZoomLevel()}: ${measureText('a')}`);
+    console.log(`${msg} - zoom level ${webFrame.getZoomLevel()} - pixel ratio: ${computePixelRatio()} - width of 'a': ${measureText('a')}`);
+}
+
+function computePixelRatio() {
+    let ctx = document.createElement('canvas').getContext('2d');
+    let dpr = window.devicePixelRatio || 1;
+    let bsr = ctx.webkitBackingStorePixelRatio ||
+        ctx.mozBackingStorePixelRatio ||
+        ctx.msBackingStorePixelRatio ||
+        ctx.oBackingStorePixelRatio ||
+        ctx.backingStorePixelRatio || 1;
+    return dpr / bsr;
 }
 
 function measureText(chr) {
